@@ -51,7 +51,6 @@
             ctx.putImageData(img_Data, 0, 0);
             window.requestAnimationFrame(animate);
 
-            // console.log(img_Data);
             imgData = img_Data.data; // 获取图片的data
             // 获取图片data的宽度和高度
             var imgDataWidth = img_Data.width;
@@ -69,14 +68,11 @@
                     line = line + toText(gray); // 把灰度值转换为对应的字符
                 }
                 line = line + "</br>"; // 加入换行符
-                // console.log(line);
                 cont = cont + line; // 将拼接起来的内容正式放入一行cont
-                // textPic.innerHTML = textPic.innerHTML + line;
             }
             textPic.innerHTML = cont;
         }
         animate();
-        // textPic.innerHTML = "";
     }
 
     // 将rgb值转换为灰度值
