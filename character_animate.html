@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>字符画</title>
+</head>
+
+<body>
+    <input type="file" id="videofile" autocomplete="off" />
+    <br>
+    <div style="display: inline;">
+        <video id="character_pic" controls></video>
+        <div id="textPic" style="font-size:5px;font-family:'宋体',Simsun;text-align:left;display:inline-block;vertical-align:top;"></div>
+    </div>
+    <canvas id="canvas" style="border: 1px solid red;display:none"></canvas>
+</body>
+<script type="text/javascript">
+    var videofile = document.getElementById("videofile");
+    videofile.onchange = function() {
+        let media_id = "character_pic";
+        preview_upload_media(this, media_id)
+    }
+    // 把input的视频文件载入vido标签
+    function preview_upload_media(obj, media_id){
+        let media =  document.getElementById(media_id);
+        let obj_file = obj.files[0];
+        let reader = new FileReader();
+        reader.readAsArrayBuffer(obj_file);
+        reader.onload = function(e){
+            let bf = this.result;
+            let blob = new Blob([bf],{type:obj_file.type});
+            let str = URL.createObjectURL(blob);
+            media.src = str;
+        };
+    }
+
+    var video = document.getElementById("character_pic");
+    video.onplay = function() {
+        var canvas = document.getElementById("canvas");
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        function animate() {
+            
+            var ctx = canvas.getContext('2d');
+
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            var img_Data = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+            ctx.putImageData(img_Data, 0, 0);
+            window.requestAnimationFrame(animate);
+
+            // console.log(img_Data);
+            imgData = img_Data.data; // 获取图片的data
+            // 获取图片data的宽度和高度
+            var imgDataWidth = img_Data.width;
+            var imgDataHeight = img_Data.height;
+
+            var cont = ""; // 这是一行的内容
+            for (h = 0; h < imgDataHeight; h = h + 4) {
+                var line = "";
+                for (w = 0; w < imgDataWidth; w = w + 2) {
+                    var index = (w + h * imgDataWidth) * 4;
+                    var r = imgData[index];
+                    var g = imgData[index + 1];
+                    var b = imgData[index + 2];
+                    var gray = getGray(r, g, b); // 将rgb值转换为灰度值
+                    line = line + toText(gray); // 把灰度值转换为对应的字符
+                }
+                line = line + "</br>"; // 加入换行符
+                // console.log(line);
+                cont = cont + line; // 将拼接起来的内容正式放入一行cont
+                // textPic.innerHTML = textPic.innerHTML + line;
+            }
+            textPic.innerHTML = cont;
+        }
+        animate();
+        // textPic.innerHTML = "";
+    }
+
+    // 将rgb值转换为灰度值
+    function getGray(r, g, b) {
+        return 0.299 * r + 0.578 * g + 0.114 * b;
+    }
+
+    // 把灰度值转换为对应的字符
+    function toText(g) {
+
+        // var charList = "@#$%^*()_+!?|~abcdefghijklnmopqrstuvwxyzABCDEFGHIJKLNMOPQRSTUVWXYZ123456789.";
+        // var charListArr = charList.split('');
+        // charListArr.push("&ensp;"); // 空格
+        // return charListArr[Math.floor(g / ((255) / charListArr.length))] // 这个相当于是选出了灰度与哪个字符对应。
+
+        /**
+         * 字符太多的话，会很卡的
+         * 字符太多的话，有时反而看不清楚
+         */
+        if (g <= 30) {
+            return "M";
+        } else if (g <= 60) {
+            return "W";
+        } else if (g <= 120) {
+            return "$";
+        } else if (g <= 150) {
+            return "*";
+        } else if (g <= 180) {
+            return "B";
+        } else if (g <= 210) {
+            return "!";
+        } else if (g <= 240) {
+            return "8";
+        } else {
+            return ".";
+        }
+    }
+</script>
+
+</html>
