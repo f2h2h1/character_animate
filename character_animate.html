@@ -4,19 +4,41 @@
 <head>
     <meta charset="UTF-8">
     <title>字符画</title>
+    <style>
+    body {
+        background-color: black;
+        color: white;
+    }
+    #textPic {
+        font-size: 5px;
+        font-family: '宋体',Simsun;
+        text-align: left;
+        display: inline-block;
+        vertical-align: top;
+    }
+    #canvas {
+        border: 1px solid red;
+        display:none;
+    }
+    </style>
 </head>
 
 <body>
     <input type="file" id="videofile" autocomplete="off" />
+    <label><input type="checkbox" id="close_light" autocomplete="off" checked/>关灯</label>
     <br>
     <div style="display: inline;">
         <video id="character_pic" controls></video>
-        <div id="textPic" style="font-size:5px;font-family:'宋体',Simsun;text-align:left;display:inline-block;vertical-align:top;"></div>
+        <div id="textPic"></div>
     </div>
-    <canvas id="canvas" style="border: 1px solid red;display:none"></canvas>
+    <canvas id="canvas"></canvas>
 </body>
 <script type="text/javascript">
     var videofile = document.getElementById("videofile");
+    var video = document.getElementById("character_pic");
+    var textPic = document.getElementById("textPic");
+    var canvas = document.getElementById("canvas");
+
     videofile.onchange = function() {
         let media_id = "character_pic";
         preview_upload_media(this, media_id)
@@ -35,9 +57,8 @@
         };
     }
 
-    var video = document.getElementById("character_pic");
     video.onplay = function() {
-        var canvas = document.getElementById("canvas");
+        
         canvas.width = video.videoWidth;
         canvas.height = video.videoHeight;
         function animate() {
@@ -108,6 +129,16 @@
             return "8";
         } else {
             return ".";
+        }
+    }
+
+    document.getElementById("close_light").onchange = function() {
+        if (this.checked == true) {
+            document.body.style.backgroundColor = "black";
+            document.body.style.color = "white";
+        } else {
+            document.body.style.backgroundColor = "white";
+            document.body.style.color = "black";
         }
     }
 </script>
